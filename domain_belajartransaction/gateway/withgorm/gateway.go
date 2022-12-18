@@ -5,16 +5,18 @@ import (
 	"gogen-transaction/domain_belajartransaction/model/entity"
 	"gogen-transaction/shared/gogen"
 	"gogen-transaction/shared/infrastructure/config"
+	"gogen-transaction/shared/infrastructure/database"
 	"gogen-transaction/shared/infrastructure/logger"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 type gateway struct {
+	*database.GormWithTransaction
 	log     logger.Logger
 	appData gogen.ApplicationData
 	config  *config.Config
-	db      *gorm.DB
+	//db      *gorm.DB
 }
 
 // NewGateway ...
@@ -31,17 +33,18 @@ func NewGateway(log logger.Logger, appData gogen.ApplicationData, cfg *config.Co
 	}
 
 	return &gateway{
-		log:     log,
-		appData: appData,
-		config:  cfg,
-		db:      db,
+		GormWithTransaction: database.NewGormWithTransaction(db, log),
+		log:                 log,
+		appData:             appData,
+		config:              cfg,
+		//db:                  db,
 	}
 }
 
 func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 	r.log.Info(ctx, "called")
 
-	err := r.db.Save(obj).Error
+	err := r.ExtractDB(ctx).Save(obj).Error
 	if err != nil {
 		return err
 	}
@@ -52,7 +55,7 @@ func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 func (r *gateway) SaveOrder(ctx context.Context, obj *entity.Order) error {
 	r.log.Info(ctx, "called")
 
-	err := r.db.Save(obj).Error
+	err := r.ExtractDB(ctx).Save(obj).Error
 	if err != nil {
 		return err
 	}

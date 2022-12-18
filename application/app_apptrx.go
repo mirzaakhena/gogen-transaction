@@ -2,7 +2,7 @@ package application
 
 import (
 	"gogen-transaction/domain_belajartransaction/controller/restapi"
-	"gogen-transaction/domain_belajartransaction/gateway/withgorm"
+	"gogen-transaction/domain_belajartransaction/gateway/withmongodb"
 	"gogen-transaction/domain_belajartransaction/usecase/runtransaction"
 	"gogen-transaction/shared/gogen"
 	"gogen-transaction/shared/infrastructure/config"
@@ -29,7 +29,7 @@ func (apptrx) Run() error {
 
 	jwtToken := token.NewJWTToken(cfg.JWTSecretKey)
 
-	datasource := withgorm.NewGateway(log, appData, cfg)
+	datasource := withmongodb.NewGateway(log, appData, cfg)
 
 	httpHandler := server.NewGinHTTPHandler(log, cfg.Servers[appName].Address, appData)
 

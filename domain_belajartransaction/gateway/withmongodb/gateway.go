@@ -8,14 +8,16 @@ import (
 	"gogen-transaction/domain_belajartransaction/model/entity"
 	"gogen-transaction/shared/gogen"
 	"gogen-transaction/shared/infrastructure/config"
+	"gogen-transaction/shared/infrastructure/database"
 	"gogen-transaction/shared/infrastructure/logger"
 )
 
 type gateway struct {
+	*database.MongoWithTransaction
 	log     logger.Logger
 	appData gogen.ApplicationData
 	config  *config.Config
-	client  *mongo.Client
+	//client  *mongo.Client
 }
 
 // NewGateway ...
@@ -28,23 +30,24 @@ func NewGateway(log logger.Logger, appData gogen.ApplicationData, cfg *config.Co
 	}
 
 	return &gateway{
-		log:     log,
-		appData: appData,
-		config:  cfg,
-		client:  client,
+		MongoWithTransaction: database.NewMongoDBWithTransaction(client, log),
+		log:                  log,
+		appData:              appData,
+		config:               cfg,
+		//client:               client,
 	}
 }
 
 func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 	r.log.Info(ctx, "called")
 
-	coll := r.client.Database("belajartrx_db").Collection("product")
+	coll := r.MongoClient.Database("belajartrx_db").Collection("product")
 
 	filter := bson.D{{"_id", obj.ID}}
 	update := bson.D{{"$set", obj}}
 	opts := options.Update().SetUpsert(true)
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update, opts)
+	result, err := coll.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
 		return err
 	}
@@ -57,13 +60,13 @@ func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 func (r *gateway) SaveOrder(ctx context.Context, obj *entity.Order) error {
 	r.log.Info(ctx, "called")
 
-	coll := r.client.Database("belajartrx_db").Collection("order")
+	coll := r.MongoClient.Database("belajartrx_db").Collection("order")
 
 	filter := bson.D{{"_id", obj.ID}}
 	update := bson.D{{"$set", obj}}
 	opts := options.Update().SetUpsert(true)
 
-	result, err := coll.UpdateOne(context.TODO(), filter, update, opts)
+	result, err := coll.UpdateOne(ctx, filter, update, opts)
 	if err != nil {
 		return err
 	}
