@@ -42,7 +42,7 @@ func NewGateway(log logger.Logger, appData gogen.ApplicationData, cfg *config.Co
 }
 
 func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
-	r.log.Info(ctx, "called")
+	r.log.Info(ctx, "called SaveProduct")
 
 	err := r.ExtractDB(ctx).Save(obj).Error
 	if err != nil {
@@ -53,7 +53,7 @@ func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 }
 
 func (r *gateway) SaveOrder(ctx context.Context, obj *entity.Order) error {
-	r.log.Info(ctx, "called")
+	r.log.Info(ctx, "called SaveOrder")
 
 	err := r.ExtractDB(ctx).Save(obj).Error
 	if err != nil {

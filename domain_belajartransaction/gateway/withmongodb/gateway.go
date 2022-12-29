@@ -39,7 +39,7 @@ func NewGateway(log logger.Logger, appData gogen.ApplicationData, cfg *config.Co
 }
 
 func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
-	r.log.Info(ctx, "called")
+	r.log.Info(ctx, "called Product")
 
 	coll := r.MongoClient.Database("belajartrx_db").Collection("product")
 
@@ -58,7 +58,7 @@ func (r *gateway) SaveProduct(ctx context.Context, obj *entity.Product) error {
 }
 
 func (r *gateway) SaveOrder(ctx context.Context, obj *entity.Order) error {
-	r.log.Info(ctx, "called")
+	r.log.Info(ctx, "called SaveOrder")
 
 	coll := r.MongoClient.Database("belajartrx_db").Collection("order")
 
